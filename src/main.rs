@@ -144,16 +144,29 @@ fn dummy(_: &mut [u64], _: &mut [bool; 900]) {}
 
 fn reachable(nums: &mut [u64], map: &mut [bool; 900]) {
     let reachable = if nums.len() < 3 { dummy } else { reachable };
+    let mut skip = [0; 16];
+    let len = skip.len() as u64;
 
     for fst in 0..nums.len() {
         let first = nums[fst];
+        if skip[(first % len) as usize] == first {
+            continue;
+        }
 
+        skip[(first % len) as usize] = first;
         nums.swap(0, fst);
 
         let nums_cpy = &mut nums[1..];
+        let mut skip = [0; 16];
+        let len = skip.len() as u64;
 
         for sec in fst..nums_cpy.len() {
             let el = nums_cpy[sec];
+            if skip[(el % len) as usize] == el {
+                continue;
+            }
+
+            skip[(el % len) as usize] = el;
             let mut f = |calc| {
                 insert(map, calc);
                 nums_cpy[sec] = calc;
